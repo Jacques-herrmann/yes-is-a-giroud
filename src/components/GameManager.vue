@@ -1,43 +1,41 @@
 <script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
+import Engine from "@/webgl/engine";
+import Loader from "@/webgl/utils/loader";
+import toLoad from "@/webgl/toLoad";
+import {onMounted, ref} from "vue";
+import BeginScreen from '@/components/BeginScreen.vue'
+let engine, loader
+
+let started = ref(false)
+
+onMounted(() => {
+  loader = new Loader(toLoad)
+  loader.on('ready', () => {
+    engine = new Engine(document.getElementById('webgl'))
+  })
+  loader.load(toLoad)
 })
+
+const start = () => {
+  started.value = true
+  engine && engine.start()
+}
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+  <div class="game-manager">
+    <canvas id="webgl"></canvas>
+    <BeginScreen @start="start()" v-if="!started"></BeginScreen>
   </div>
 </template>
 
 <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  top: -10px;
-}
 
-h3 {
-  font-size: 1.2rem;
-}
-
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
+#webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
 }
 </style>

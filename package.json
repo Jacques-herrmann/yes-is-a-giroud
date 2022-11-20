@@ -8,7 +8,14 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "eventemitter2": "^6.4.9",
+    "gsap": "^3.11.3",
     "pinia": "^2.0.23",
+    "sass": "^1.56.1",
+    "sass-loader": "^13.2.0",
+    "three": "^0.146.0",
+    "three-mesh-bvh": "^0.5.18",
+    "tweakpane": "^3.1.0",
     "vue": "^3.2.41"
   },
   "devDependencies": {
