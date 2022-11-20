@@ -2,45 +2,76 @@ import {
 	Scene,
 	Color,
 	AmbientLight,
-	PointLight
+	PointLight, EventDispatcher
 } from "three";
 
 import {PlayerController} from "@/webgl/characters/playerController";
 import {Enemy} from "@/webgl/characters/enemy";
 import {EnemyController} from "@/webgl/characters/enemyController";
 import Grid from "@/webgl/terrain/grid";
+import config from "@/webgl/config"
 
-const S = 20
-
-export default class Wave {
-	constructor() {
+export default class Wave extends EventDispatcher{
+	constructor(player) {
+		super()
 		this.difficulty = 0
 
 		this.scene = new Scene()
 		this.scene.background = new Color('#333')
-	}
-
-	run(){}
-	end(){}
-
-	init(player) {
-		this.player = player
-		this.grid = new Grid(S, 3)
-		this.enemy = new Enemy()
-		this.scene.add(this.grid.terrain)
-		this.scene.add(player)
-		this.scene.add(this.enemy)
-
 		this.scene.add(new AmbientLight(10))
 		const p = new PointLight("#ffffff", 5)
 		p.position.set(-2, 20, 3)
 		this.scene.add(p)
 
-		this.playerControl = new PlayerController(player, this.grid.collider)
-		this.enemyControl = new EnemyController(this.enemy, this.grid.collider)
+		this.player = player
+		this.scene.add(player)
+		this.player.addEventListener('move', this.updateDijkstraMap.bind(this))
 
-		player.addEventListener('move', this.updateDijkstraMap.bind(this))
-		this.enemy.addEventListener('move', this.updateDijkstraMap.bind(this))
+		this.enemies = []
+		this.playerControl = null
+		this.enemiesControls = []
+	}
+
+
+	init() {
+		const waveConfig = config.waves[this.difficulty]
+
+		this.grid = new Grid(waveConfig.terrainSize, 3)
+		this.scene.add(this.grid.terrain)
+
+		for (let i = 0; i < waveConfig.enemies.number; i++) {
+			const enemy = new Enemy(waveConfig.enemies.strength)
+			this.enemies.push(enemy)
+			const enemyControl = new EnemyController(enemy, this.grid.collider)
+			enemy.addEventListener('move', this.updateDijkstraMap.bind(this))
+			enemy.addEventListener('dead', (enemy) => {
+				this.onEnemyDied.bind(this, enemy)
+			})
+			this.enemiesControls.push(enemyControl)
+			this.scene.add(enemy)
+		}
+
+		this.playerControl = new PlayerController(this.player, this.grid.collider)
+	}
+
+	onEnemyDied(enemy) {
+		enemy.dispose()
+		this.enemies.slice(this.enemies.indexOf(enemy))
+		if(!this.enemies.length) {
+			this.dispatchEvent({type: 'waveEnd'})
+		}
+	}
+
+	next() {
+		this.difficulty += 1
+		this.init()
+	}
+
+	reset() {
+		this.dispose()
+		this.difficulty = 0
+
+		this.init()
 	}
 
 	resize() {
@@ -48,12 +79,24 @@ export default class Wave {
 
 	update(delta, controls) {
 		this.playerControl.update(delta, controls)
-		this.enemyControl.update(delta, controls)
+		this.enemiesControls.forEach(c => c.update(delta, controls))
 	}
 
 	updateDijkstraMap() {
-		this.grid.updateDijkstraMap(this.player, [this.enemy])
+		this.grid.updateDijkstraMap(this.player, this.enemies)
 	}
 
-	dispose(){}
+	dispose(){
+		this.grid.dispose()
+
+		this.enemies.forEach(enemy => {
+			enemy.dispose()
+			enemy.removeEventListener('move', this.updateDijkstraMap.bind(this))
+			enemy.removeEventListener('dead', (enemy) => {
+				this.onEnemyDied.bind(this, enemy)
+			})
+		})
+		this.enemies.splice(0, this.enemies.length)
+		this.enemiesControls.splice(0, this.enemiesControls.length)
+	}
 }

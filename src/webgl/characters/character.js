@@ -41,6 +41,17 @@ export class Character extends Group{
         return instances
     }
 
+    dispose() {
+        this.mesh.geometry.dispose()
+    }
+
+    receiveDamage(d) {
+        this.life = Math.max(0, this.life - d)
+        if(!this.life) {
+            this.dispatchEvent({type: 'dead', value: this})
+        }
+    }
+
     update(){
         this.mesh.updateMatrix()
         this.mesh.geometry.computeBoundingBox()

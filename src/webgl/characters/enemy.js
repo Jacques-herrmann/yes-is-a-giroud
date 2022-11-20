@@ -7,8 +7,10 @@ import Loader from "@/webgl/utils/loader";
 import {Character} from "./character";
 
 export class Enemy extends Character{
-    constructor() {
+    constructor(strength) {
         super(Loader.items.enemy.scene.children[0])
+        this.life = 100
+        this.strength = strength
 
         this.mesh.material = new MeshBasicMaterial({color: 'red'})
         this.mesh.geometry.translate(0, -0.5, 0)
@@ -53,5 +55,6 @@ export class Enemy extends Character{
 
     update() {
         super.update()
+        
     }
 }

@@ -44,7 +44,11 @@ export class CharacterController {
     }
 
     update(delta, controls) {
-        // return
+        if(this.character.mesh.position.y < -1) {
+            this.character.receiveDamage(this.character.life)
+            return
+        }
+
         this.character.velocity.y += this.characterIsOnGround ? 0: delta * G
         this.character.velocity.y *= this.character.velocity.y > 0 ? 1  : 1.01
         this.character.mesh.position.addScaledVector(this.character.velocity, delta)

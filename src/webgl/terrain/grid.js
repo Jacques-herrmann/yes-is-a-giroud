@@ -63,9 +63,9 @@ export default class Grid {
 				tiles[y].push([])
 				for (let z = 0; z < division; z++) {
 					const topLeft = new Vector3(
-							 x * this.tileSize,
+							x * this.tileSize,
 							y * this.tileSize,
-							 z * this.tileSize
+							z * this.tileSize
 					)
 					const bottomRight = new Vector3().copy(topLeft)
 					bottomRight.add(new Vector3(this.tileSize, 2, this.tileSize))
@@ -145,5 +145,15 @@ export default class Grid {
 		const x = Math.floor(position.x / this.tileSize)
 		const z = Math.floor(position.y / this.tileSize)
 		return new Vector2(x,z)
+	}
+
+	dispose() {
+		currentElevation = 0
+		this.terrain.dispose()
+		this.visualizer.dispose()
+		this.dijkstraMap = null
+
+		tiles.splice(0, tiles.length)
+		tiles2D.splice(0, tiles2D.length)
 	}
 }
