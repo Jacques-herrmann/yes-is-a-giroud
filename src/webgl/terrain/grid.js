@@ -147,10 +147,17 @@ export default class Grid {
 		return new Vector2(x,z)
 	}
 
-	dispose() {
+	getRandomPosition() {
+		return new Vector3(Math.random() * this.size, this.elevation + 2, Math.random() * this.size)
+	}
+
+	dispose(scene) {
 		currentElevation = 0
 		this.terrain.dispose()
 		this.visualizer.dispose()
+		this.collider.geometry.dispose()
+		scene.remove(this.terrain)
+		this.dijkstraMap.dispose()
 		this.dijkstraMap = null
 
 		tiles.splice(0, tiles.length)

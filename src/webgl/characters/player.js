@@ -11,7 +11,7 @@ export class Player extends Character{
 
         this.mesh.material = new MeshBasicMaterial({color: 'green'})
         this.mesh.geometry.translate(0, -0.5, 0)
-        this.mesh.position.set(5, 5.5, 5)
+        this.mesh.position.set(0, 5.5, 0)
     }
 
     reset() {

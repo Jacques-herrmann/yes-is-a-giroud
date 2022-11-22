@@ -1,6 +1,5 @@
 import {EventEmitter2} from 'eventemitter2'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
-import Engine from "../Engine";
 import {LoadingManager, TextureLoader} from "three";
 
 const items = []

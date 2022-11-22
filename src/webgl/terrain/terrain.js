@@ -20,8 +20,8 @@ export default class Terrain extends Group {
 	}
 
 	dispose() {
-		this.ground.geometry.dispose()
-		this.ground.material.dispose()
+		// this.ground.geometry.dispose()
+		// this.ground.material.dispose()
 
 		for (let i = 0; i < this.children; i++) {
 			this.remove(this.children[i])

@@ -35,7 +35,7 @@ export default class Engine extends EventDispatcher{
 
 	start() {
 		this.isRunning = true
-		this.wave.init(0)
+		this.wave.init()
 	}
 
 	next() {
@@ -59,7 +59,7 @@ export default class Engine extends EventDispatcher{
 	waveEnd() {
 		console.log('wave end')
 		this.isRunning = false
-		this.dispatchEvent({ type: 'waveEnd', stats: this.stats})
+		this.dispatchEvent({ type: 'endWave', stats: this.stats})
 	}
 
 	resize() {

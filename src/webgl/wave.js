@@ -40,12 +40,12 @@ export default class Wave extends EventDispatcher{
 		this.scene.add(this.grid.terrain)
 
 		for (let i = 0; i < waveConfig.enemies.number; i++) {
-			const enemy = new Enemy(waveConfig.enemies.strength)
+			const enemy = new Enemy(waveConfig.enemies.strength, this.grid.getRandomPosition())
 			this.enemies.push(enemy)
 			const enemyControl = new EnemyController(enemy, this.grid.collider)
 			enemy.addEventListener('move', this.updateDijkstraMap.bind(this))
 			enemy.addEventListener('dead', (enemy) => {
-				this.onEnemyDied.bind(this, enemy)
+				this.onEnemyDied(enemy)
 			})
 			this.enemiesControls.push(enemyControl)
 			this.scene.add(enemy)
@@ -54,15 +54,16 @@ export default class Wave extends EventDispatcher{
 		this.playerControl = new PlayerController(this.player, this.grid.collider)
 	}
 
-	onEnemyDied(enemy) {
-		enemy.dispose()
-		this.enemies.slice(this.enemies.indexOf(enemy))
+	onEnemyDied(ev) {
+		this.scene.remove(ev.instance)
+		this.enemies.splice(this.enemies.indexOf(ev.instance), 1)
 		if(!this.enemies.length) {
 			this.dispatchEvent({type: 'waveEnd'})
 		}
 	}
 
 	next() {
+		this.dispose()
 		this.difficulty += 1
 		this.init()
 	}
@@ -87,13 +88,14 @@ export default class Wave extends EventDispatcher{
 	}
 
 	dispose(){
-		this.grid.dispose()
+		this.grid.dispose(this.scene)
 
 		this.enemies.forEach(enemy => {
 			enemy.dispose()
+			this.scene.remove(enemy)
 			enemy.removeEventListener('move', this.updateDijkstraMap.bind(this))
 			enemy.removeEventListener('dead', (enemy) => {
-				this.onEnemyDied.bind(this, enemy)
+				this.onEnemyDied(enemy)
 			})
 		})
 		this.enemies.splice(0, this.enemies.length)

@@ -15,7 +15,7 @@ export class Character extends Group{
         this.name = ""
         this.velocity = new Vector3()
 
-        this.mesh = model
+        this.mesh = model.clone()
 
         this.collider = new Box3()
         this.mesh.updateMatrix()
@@ -42,13 +42,14 @@ export class Character extends Group{
     }
 
     dispose() {
-        this.mesh.geometry.dispose()
+        // this.mesh.geometry.dispose()
     }
 
     receiveDamage(d) {
+        console.log(d)
         this.life = Math.max(0, this.life - d)
         if(!this.life) {
-            this.dispatchEvent({type: 'dead', value: this})
+            this.dispatchEvent({type: 'dead', instance: this})
         }
     }
 

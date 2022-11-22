@@ -7,14 +7,14 @@ import Loader from "@/webgl/utils/loader";
 import {Character} from "./character";
 
 export class Enemy extends Character{
-    constructor(strength) {
+    constructor(strength, position) {
         super(Loader.items.enemy.scene.children[0])
         this.life = 100
         this.strength = strength
 
         this.mesh.material = new MeshBasicMaterial({color: 'red'})
         this.mesh.geometry.translate(0, -0.5, 0)
-        this.mesh.position.set(35, 5.5, 35)
+        this.mesh.position.copy(position)
 
         this.path = new CatmullRomCurve3([new Vector3(), new Vector3()])
         this.indexOnCurve = 0
@@ -55,6 +55,5 @@ export class Enemy extends Character{
 
     update() {
         super.update()
-        
     }
 }

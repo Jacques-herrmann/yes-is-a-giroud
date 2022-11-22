@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import {EventEmitter2} from 'eventemitter2'
-import Engine from "../Engine";
+import Engine from "../engine";
 import {Raycaster} from "three";
 
 export default class Cursor extends EventEmitter2 {

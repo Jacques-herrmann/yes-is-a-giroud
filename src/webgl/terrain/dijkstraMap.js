@@ -89,7 +89,7 @@ export default class DijkstraMap {
 			})
 			visited.push(current)
 		}
-		console.log(`Dijkstra Maps update time: ${performance.now() - t}`)
+		// console.log(`Dijkstra Maps update time: ${performance.now() - t}`)
 	}
 
 	findPath(enemy=new Vector2()) {
@@ -134,5 +134,9 @@ export default class DijkstraMap {
 				t.toHTML()
 			})
 		}
+	}
+
+	dispose() {
+		this.element.remove()
 	}
 }
