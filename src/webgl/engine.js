@@ -1,7 +1,7 @@
 import Stage from "./stage";
 import {Clock, EventDispatcher} from "three";
 import {OrbitControls} from "@/webgl/customs/OrbitControls";
-import {Player} from "@/webgl/characters/Player";
+import {Player} from "@/webgl/characters/player";
 import Wave from "@/webgl/wave";
 
 let instance = null;
