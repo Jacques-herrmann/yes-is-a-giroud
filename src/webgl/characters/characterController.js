@@ -4,6 +4,7 @@ import {Box3, Line3, Matrix4, Vector3} from "three";
 const G = -30 // gravity
 const TMP_V = new Vector3()
 const TMP_V2 = new Vector3()
+const DIR = new Vector3()
 const TMP_B = new Box3()
 const TMP_M = new Matrix4()
 const TMP_L = new Line3()
@@ -24,18 +25,22 @@ export class CharacterController {
         if(this.movement.includes('Forward')) {
             TMP_V.set(0, 0, -1).applyAxisAngle(UP, angle)
             this.character.mesh.position.addScaledVector(TMP_V, this.speed * delta)
+            // this.character.direction.lerp(TMP_V, 0.1)
         }
         if(this.movement.includes('Backward')) {
             TMP_V.set(0, 0, 1).applyAxisAngle(UP, angle)
             this.character.mesh.position.addScaledVector(TMP_V, this.speed * delta)
+            // this.character.direction.lerp(TMP_V, 0.1)
         }
         if(this.movement.includes('Left')) {
             TMP_V.set(-1, 0, 0).applyAxisAngle(UP, angle)
             this.character.mesh.position.addScaledVector(TMP_V, this.speed * delta)
+            // this.character.direction.lerp(TMP_V, 0.1)
         }
         if(this.movement.includes('Right')) {
             TMP_V.set(1, 0, 0).applyAxisAngle(UP, angle)
             this.character.mesh.position.addScaledVector(TMP_V, this.speed * delta)
+            // this.character.direction.lerp(TMP_V, 0.1)
         }
         if(this.movement.includes('Up') && this.characterIsOnGround) {
             // TMP_V.set(1, 0, 0).applyAxisAngle(UP, angle)
@@ -48,6 +53,7 @@ export class CharacterController {
             this.character.receiveDamage(this.character.life)
             return
         }
+        const old = new Vector3().copy(this.character.mesh.position)
 
         this.character.velocity.y += this.characterIsOnGround ? 0: delta * G
         this.character.velocity.y *= this.character.velocity.y > 0 ? 1  : 1.01
@@ -84,10 +90,10 @@ export class CharacterController {
                 if ( distance < this.character.radius ) {
 
                     const depth = this.character.radius - distance;
-                    const direction = capsulePoint.sub( triPoint ).normalize();
+                    DIR.copy(capsulePoint.sub( triPoint ).normalize());
 
-                    TMP_L.start.addScaledVector( direction, depth );
-                    TMP_L.end.addScaledVector( direction, depth );
+                    TMP_L.start.addScaledVector( DIR, depth );
+                    TMP_L.end.addScaledVector( DIR, depth );
                 }
             }
         });
@@ -101,7 +107,6 @@ export class CharacterController {
         // check how much the collider was moved
         const deltaVector = TMP_V2;
         deltaVector.subVectors( newPosition, this.character.mesh.position );
-
         // if the player was primarily adjusted vertically we assume it's on something we should consider ground
         this.characterIsOnGround = deltaVector.y > Math.abs( delta * this.character.velocity.y * this.character.radius );
 
@@ -110,6 +115,14 @@ export class CharacterController {
 
         // adjust the player model
         this.character.mesh.position.add( deltaVector );
+
+        const dir = new Vector3().subVectors(old, this.character.mesh.position).setY(0).normalize().multiplyScalar(-1)
+        if(dir.length()) {
+            dir.add(this.character.mesh.position)
+            dir.add(new Vector3(0, this.character.collider.min.y, 0))
+            this.character.mesh.lookAt(dir)
+            this.character.direction.copy(dir)
+        }
 
         if (!this.characterIsOnGround) {
             deltaVector.normalize();

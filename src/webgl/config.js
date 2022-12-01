@@ -2,7 +2,7 @@ export default {
 	waves: [
 		{
 			enemies: {
-				number: 1,
+				number: 0,
 				strength: 50
 			},
 			terrainSize: 20

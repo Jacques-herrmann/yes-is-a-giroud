@@ -95,6 +95,7 @@ export default class DijkstraMap {
 	findPath(enemy=new Vector2()) {
 		const p = []
 		let current = this.tileAt(enemy.x, enemy.y)
+		if(! current) return
 		while(current.value !== 0) {
 			p.push(current)
 			const neighbours = this.neighboursAt(current.x, current.z).sort((a, b) => a.value - b.value)

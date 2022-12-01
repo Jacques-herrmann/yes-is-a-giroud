@@ -14,6 +14,7 @@ export class Character extends Group{
         super()
         this.name = ""
         this.velocity = new Vector3()
+        this.direction = new Vector3()
 
         this.mesh = model.clone()
 
@@ -46,7 +47,6 @@ export class Character extends Group{
     }
 
     receiveDamage(d) {
-        console.log(d)
         this.life = Math.max(0, this.life - d)
         if(!this.life) {
             this.dispatchEvent({type: 'dead', instance: this})
@@ -54,9 +54,6 @@ export class Character extends Group{
     }
 
     update(){
-        this.mesh.updateMatrix()
-        this.mesh.geometry.computeBoundingBox()
-        this.collider.copy(this.mesh.geometry.boundingBox).applyMatrix4(this.mesh.matrix)
         if(Math.floor(this.position2D.x) !== Math.floor(this.mesh.position.x) ||  Math.floor(this.position2D.y) !== Math.floor(this.mesh.position.z)) {
             this.position2D.set(this.mesh.position.x, this.mesh.position.z)
             this.dispatchEvent({type: 'move'})

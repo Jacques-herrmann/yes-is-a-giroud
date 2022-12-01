@@ -16,7 +16,7 @@ const base = [
 	{
 		name: 'empty',
 		index: i++,
-		weight: 40,
+		weight: 2,
 		rotation: 0,
 		profiles: {
 			posX: '1',

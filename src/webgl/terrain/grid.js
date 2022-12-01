@@ -4,6 +4,7 @@ import {MeshBVH, MeshBVHVisualizer} from "three-mesh-bvh";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import Terrain from "./terrain";
 import DijkstraMap from "./dijkstraMap";
+import {clamp} from "../utils/math";
 
 const tiles = []
 const tiles2D = []
@@ -142,8 +143,8 @@ export default class Grid {
 	}
 
 	tileIndexAt(position=new Vector2()) {
-		const x = Math.floor(position.x / this.tileSize)
-		const z = Math.floor(position.y / this.tileSize)
+		const x = clamp(Math.floor(position.x / this.tileSize), 0, this.division)
+		const z = clamp(Math.floor(position.y / this.tileSize), 0, this.division)
 		return new Vector2(x,z)
 	}
 
